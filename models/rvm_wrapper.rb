@@ -9,14 +9,10 @@ class RvmWrapper < Jenkins::Tasks::BuildWrapper
     @impl = fix_empty attrs['impl']
   end
 
-  def rvm_path
-    @rvm_path ||= ["~/.rvm/scripts/rvm", "/usr/local/rvm/scripts/rvm"].find do |path|
+  def detect_rvm_path(launcher)
+    ["~/.rvm/scripts/rvm", "/usr/local/rvm/scripts/rvm"].find do |path|
       launcher.execute("bash", "-c", "test -f #{path}") == 0
     end
-  end
-
-  def rvm_installed?
-    ! rvm_path.nil?
   end
 
   def setup(build, launcher, listener)
@@ -31,7 +27,8 @@ class RvmWrapper < Jenkins::Tasks::BuildWrapper
       build.abort
     end
 
-    if ! rvm_installed?
+    rvm_path = detect_rvm_path(launcher)
+    unless rvm_path
       listener << "Installing RVM\n"
       installer = build.workspace + "rvm-installer"
       installer.native.copyFrom(java.net.URL.new("https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer"))

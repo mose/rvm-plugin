@@ -35,13 +35,13 @@ class RvmWrapper < Jenkins::Tasks::BuildWrapper
 
     if @impl || !(build.workspace+".rvmrc").exist?
       listener << "Capturing environment variables produced by 'rvm use #{@impl}'\n"
-      command = "rvm use --create #{@impl}"
+      command = "rvm use --install --create #{@impl}"
     else
       listener << "Setting up environment based on project .rvmrc\n"
       command = "source .rvmrc"
     end
 
-    if launcher.execute("bash","-c"," source #{rvm_path} && rvm_install_on_use_flag=1 && #{command} && export > rvm.env", {:out=>listener,:chdir=>build.workspace}) != 0 then
+    if launcher.execute("bash","-c"," source #{rvm_path} && #{command} && export > rvm.env", {:out=>listener,:chdir=>build.workspace}) != 0 then
       build.abort "Failed to setup RVM environment"
     end
 

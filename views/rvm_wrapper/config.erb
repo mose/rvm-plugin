@@ -1,6 +1,6 @@
 <%
 f = taglib("/lib/form")
-f.entry(:title => 'Implementation', :field => 'impl', :description => "RUBY[@GEMSET], such as '1.9.3' or 'jruby@foo'") do
+f.entry(:title => 'Implementation', :field => 'impl', :description => "RUBY[@GEMSET], such as '1.9.3' or 'jruby@foo'. If you leave it empty, .rvmrc will be used if found. The ruby version will be installed by rvm if not present") do
   f.textbox
 end
 %>
